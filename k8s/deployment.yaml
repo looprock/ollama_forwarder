@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: ollama-service
-          image: ghcr.io/looprock/ollama_forwarder/ollama-service:latest
+          image: ghcr.io/[YOUR_USERNAME]/ollama_forwarder/ollama-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
