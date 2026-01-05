@@ -1,0 +1,15 @@
+[project]
+name = "python"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "flask>=3.1.0",
+    "mlx>=0.30.1",
+    "numpy>=2.4.0",
+    "requests>=2.32.0",
+    "sentencepiece>=0.2.1",
+    "torch>=2.9.1",
+    "watchdog>=6.0.0",
+]
