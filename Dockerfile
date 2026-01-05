@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir flask requests
 # Copy application code
 COPY ollama_service.py ./
 
-# Create non-root useryour-secret-api-key-here
+# Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
@@ -25,6 +25,4 @@ ENV PREPEND_STATEMENT=""
 ENV API_KEY=change-me-in-production
 
 # Run the service
-CMD ["python", "ollama_service.py", \
-     "--host", "0.0.0.0", \
-     "--port", "5000"]
+CMD ["python", "ollama_service.py", "--host", "0.0.0.0", "--port", "5000"]
