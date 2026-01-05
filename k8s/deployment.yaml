@@ -6,7 +6,7 @@ metadata:
   labels:
     app: ollama-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: ollama-service
@@ -16,76 +16,63 @@ spec:
         app: ollama-service
     spec:
       containers:
-      - name: ollama-service
-        image: ghcr.io/YOUR_GITHUB_USERNAME/ollama-service:latest  # Update with your image
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 5000
-          name: http
-          protocol: TCP
-        env:
-        - name: OLLAMA_URL
-          valueFrom:
-            configMapKeyRef:
-              name: ollama-service-config
-              key: OLLAMA_URL
-        - name: MODEL
-          valueFrom:
-            configMapKeyRef:
-              name: ollama-service-config
-              key: MODEL
-        - name: PREPEND_STATEMENT
-          valueFrom:
-            configMapKeyRef:
-              name: ollama-service-config
-              key: PREPEND_STATEMENT
-        - name: API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: ollama-service-secret
-              key: api-key
-        args:
-        - "--host"
-        - "0.0.0.0"
-        - "--port"
-        - "5000"
-        - "--ollama-url"
-        - "$(OLLAMA_URL)"
-        - "--model"
-        - "$(MODEL)"
-        - "--prepend"
-        - "$(PREPEND_STATEMENT)"
-        - "--api-key"
-        - "$(API_KEY)"
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 5000
-          initialDelaySeconds: 10
-          periodSeconds: 30
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 5000
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          timeoutSeconds: 3
-          failureThreshold: 3
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: false
-          capabilities:
-            drop:
-            - ALL
+        - name: ollama-service
+          image: ghcr.io/looprock/ollama_forwarder/ollama-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+              name: http
+              protocol: TCP
+          env:
+            - name: OLLAMA_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ollama-service-config
+                  key: OLLAMA_URL
+            - name: MODEL
+              valueFrom:
+                configMapKeyRef:
+                  name: ollama-service-config
+                  key: MODEL
+            - name: PREPEND_STATEMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: ollama-service-config
+                  key: PREPEND_STATEMENT
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ollama-service-secret
+                  key: api-key
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
       restartPolicy: Always
