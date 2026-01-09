@@ -18,7 +18,7 @@ API_KEY = os.getenv("API_KEY", "change-me-in-production")
 def chat():
     """
     Handle POST request with payload:
-    {"user": "[username]", "message": "[a question]"}
+    {"user": "[username]", "message": "[a question]", "prepend": "[optional prepend statement]"}
 
     Returns:
     {"user": "[original user]", "response": "[ollama response]"}
@@ -41,16 +41,17 @@ def chat():
 
         user = data.get("user")
         message = data.get("message")
+        prepend = data.get("prepend")
 
         if not user or not message:
             return jsonify(
                 {"error": "Both 'user' and 'message' fields are required"}
             ), 400
 
-        # Build the full prompt with optional prepended statement from config
-        full_prompt = (
-            f"{PREPEND_STATEMENT}\n{message}" if PREPEND_STATEMENT else message
-        )
+        # Build the full prompt with optional prepended statement
+        # Use request's prepend if provided, otherwise fall back to PREPEND_STATEMENT
+        prepend_text = prepend if prepend is not None else PREPEND_STATEMENT
+        full_prompt = f"{prepend_text}\n{message}" if prepend_text else message
 
         # Send message to Ollama using native API format
         ollama_payload = {
